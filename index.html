@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RNR Build — Technological Construction Consultancy</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B2D4F;
+  --navy-deep: #0F1A2E;
+  --navy-mid: #243B5E;
+  --navy-80: rgba(27,45,79,0.8);
+  --teal: #00A5A8;
+  --teal-light: #00C9CB;
+  --teal-dark: #008587;
+  --teal-muted: #5EC4C6;
+  --cyan-glow: #00E5E8;
+  --white: #FFFFFF;
+  --off-white: #F4F6F8;
+  --light-gray: #E8ECF0;
+  --mid-gray: #94A3B8;
+  --dark-gray: #475569;
+  --accent-gold: #D4A843;
+  --gradient-primary: linear-gradient(135deg, #1B2D4F 0%, #00A5A8 100%);
+  --gradient-teal: linear-gradient(135deg, #008587 0%, #00C9CB 100%);
+  --gradient-dark: linear-gradient(160deg, #0F1A2E 0%, #1B2D4F 40%, #243B5E 100%);
+  --shadow-sm: 0 1px 3px rgba(27,45,79,0.08);
+  --shadow-md: 0 4px 24px rgba(27,45,79,0.10);
+  --shadow-lg: 0 12px 48px rgba(27,45,79,0.16);
+  --shadow-glow: 0 0 40px rgba(0,165,168,0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off-white);
+  color: var(--navy);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ════════════ UTILITY ════════════ */
+.container { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
+.mono-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--teal);
+  display: flex; align-items: center; gap: 12px;
+}
+.mono-label::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--teal);
+}
+.section-heading {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-top: 14px;
+}
+.section-subtext {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--dark-gray);
+  max-width: 560px;
+  margin-top: 18px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600; font-size: 0.92rem;
+  padding: 16px 36px;
+  border-radius: 60px;
+  border: none; cursor: pointer;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.btn-primary {
+  background: var(--teal);
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(0,165,168,0.35);
+}
+.btn-primary:hover {
+  background: var(--teal-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,165,168,0.4);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.3);
+}
+.btn-outline:hover {
+  border-color: var(--teal-light);
+  color: var(--teal-light);
+  background: rgba(0,165,168,0.06);
+}
+.btn-dark-outline {
+  background: transparent;
+  color: var(--navy);
+  border: 1.5px solid var(--light-gray);
+}
+.btn-dark-outline:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+/* Scroll animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ════════════ NAVIGATION ════════════ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 20px 0;
+  transition: all 0.4s ease;
+}
+.nav.scrolled {
+  background: rgba(15,26,46,0.92);
+  backdrop-filter: blur(20px);
+  padding: 14px 0;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { height: 44px; transition: height 0.4s ease; }
+.nav.scrolled .nav-logo { height: 36px; }
+.nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+.nav-links a {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--teal);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600; font-size: 0.82rem;
+  padding: 10px 26px;
+  border-radius: 60px;
+  background: var(--teal);
+  color: var(--white) !important;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { background: var(--teal-light); transform: translateY(-1px); }
+
+/* Mobile nav */
+.nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+.nav-toggle span {
+  display: block; width: 24px; height: 2px;
+  background: white; margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+/* ════════════ HERO ════════════ */
+.hero {
+  min-height: 100vh;
+  background: var(--gradient-dark);
+  display: flex; align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 80px;
+}
+.hero-grid-overlay {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,165,168,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,165,168,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 70% at 30% 60%, black, transparent);
+}
+.hero-glow-1 {
+  position: absolute; width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,165,168,0.10), transparent 65%);
+  top: -200px; right: -100px;
+  animation: float 8s ease-in-out infinite;
+}
+.hero-glow-2 {
+  position: absolute; width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,165,168,0.06), transparent 65%);
+  bottom: -100px; left: -50px;
+  animation: float 10s ease-in-out infinite reverse;
+}
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -30px); }
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  position: relative; z-index: 2;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,165,168,0.1);
+  border: 1px solid rgba(0,165,168,0.2);
+  border-radius: 60px;
+  padding: 8px 20px 8px 10px;
+  margin-bottom: 28px;
+  animation: fadeUp 0.8s ease-out 0.2s both;
+}
+.hero-badge-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--teal);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+}
+.hero-badge span {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal-muted);
+}
+.hero-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  animation: fadeUp 0.8s ease-out 0.35s both;
+}
+.hero-title .teal { color: var(--teal-light); }
+.hero-title .outline {
+  -webkit-text-stroke: 1.5px rgba(255,255,255,0.25);
+  color: transparent;
+}
+.hero-desc {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--mid-gray);
+  margin: 24px 0 36px;
+  max-width: 480px;
+  animation: fadeUp 0.8s ease-out 0.5s both;
+}
+.hero-btns {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  animation: fadeUp 0.8s ease-out 0.65s both;
+}
+
+/* Hero right — construction visual */
+.hero-visual {
+  position: relative;
+  animation: fadeUp 1s ease-out 0.5s both;
+}
+.hero-blueprint {
+  width: 100%; aspect-ratio: 1;
+  position: relative;
+}
+/* Animated construction diagram */
+.bp-frame {
+  position: absolute; inset: 0;
+  border: 1px solid rgba(0,165,168,0.15);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.bp-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,165,168,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,165,168,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+/* Building illustration */
+.building-line {
+  position: absolute;
+  background: rgba(0,165,168,0.25);
+  transition: all 1s cubic-bezier(0.4,0,0.2,1);
+}
+.bl-foundation { bottom: 15%; left: 15%; right: 15%; height: 2px; animation: drawH 1.2s ease-out 1s both; }
+.bl-left { bottom: 15%; left: 15%; width: 2px; height: 0; animation: growUp 1s ease-out 1.3s both; }
+.bl-right { bottom: 15%; right: 15%; width: 2px; height: 0; animation: growUp 1s ease-out 1.4s both; }
+.bl-floor1 { bottom: 35%; left: 15%; right: 15%; height: 1px; background: rgba(0,165,168,0.12); animation: drawH 1s ease-out 1.6s both; }
+.bl-floor2 { bottom: 55%; left: 15%; right: 15%; height: 1px; background: rgba(0,165,168,0.12); animation: drawH 1s ease-out 1.8s both; }
+.bl-roof { bottom: 72%; left: 15%; right: 15%; height: 2px; animation: drawH 1s ease-out 2s both; }
+.bl-mid { bottom: 15%; left: 50%; width: 1px; height: 0; background: rgba(0,165,168,0.08); animation: growUp 1.2s ease-out 1.5s both; }
+
+@keyframes drawH {
+  from { transform: scaleX(0); } to { transform: scaleX(1); }
+}
+@keyframes growUp {
+  from { height: 0; } to { height: 57%; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Data points on blueprint */
+.bp-node {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 12px rgba(0,165,168,0.5);
+  animation: pulseNode 2.5s ease-in-out infinite;
+}
+.bp-node::after {
+  content: attr(data-label);
+  position: absolute; left: 18px; top: -3px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--teal-muted);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.bp-node-1 { top: 26%; left: 30%; animation-delay: 0s; }
+.bp-node-2 { top: 43%; right: 22%; animation-delay: 0.8s; }
+.bp-node-3 { bottom: 28%; left: 40%; animation-delay: 1.6s; }
+
+@keyframes pulseNode {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+/* Floating stats on hero */
+.hero-stat-card {
+  position: absolute;
+  background: rgba(15,26,46,0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0,165,168,0.15);
+  border-radius: 14px;
+  padding: 18px 22px;
+  z-index: 3;
+}
+.hero-stat-card .stat-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem; font-weight: 800;
+  color: var(--teal-light);
+}
+.hero-stat-card .stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  margin-top: 2px;
+}
+.stat-card-1 { top: 10%; right: -10px; animation: fadeUp 0.8s ease-out 2.2s both; }
+.stat-card-2 { bottom: 8%; left: -10px; animation: fadeUp 0.8s ease-out 2.5s both; }
+
+/* ════════════ STATS STRIP ════════════ */
+.stats-strip {
+  background: var(--white);
+  padding: 0;
+  position: relative;
+  z-index: 5;
+}
+.stats-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--light-gray);
+}
+.stat-item {
+  padding: 48px 40px;
+  text-align: center;
+  position: relative;
+}
+.stat-item + .stat-item::before {
+  content: '';
+  position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 1px;
+  background: var(--light-gray);
+}
+.stat-number {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 800;
+  background: var(--gradient-teal);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  margin-top: 6px;
+}
+
+/* ════════════ SERVICES ════════════ */
+.services {
+  padding: 120px 0;
+  background: var(--off-white);
+}
+.services-header {
+  text-align: center;
+  margin-bottom: 72px;
+}
+.services-header .section-subtext { margin: 18px auto 0; text-align: center; }
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.service-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 44px 36px;
+  border: 1px solid var(--light-gray);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(0,165,168,0.2);
+}
+.service-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gradient-teal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.service-card:hover::before { transform: scaleX(1); }
+
+.service-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  background: rgba(0,165,168,0.08);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+  transition: background 0.3s ease;
+}
+.service-card:hover .service-icon { background: var(--teal); }
+.service-icon svg { transition: all 0.3s ease; }
+.service-card:hover .service-icon svg { stroke: white; }
+
+.service-card h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--navy);
+}
+.service-card p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--dark-gray);
+}
+.service-tags {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 20px;
+}
+.service-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: var(--off-white);
+  border-radius: 6px;
+  color: var(--teal-dark);
+}
+
+/* ════════════ FEATURED PROJECT ════════════ */
+.featured {
+  padding: 120px 0;
+  background: var(--navy-deep);
+  position: relative;
+  overflow: hidden;
+}
+.featured::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,165,168,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,165,168,0.025) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.featured .mono-label { color: var(--teal-muted); }
+.featured .section-heading { color: var(--white); }
+.featured .section-subtext { color: var(--mid-gray); }
+
+.project-showcase {
+  margin-top: 64px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 64px;
+  align-items: center;
+  position: relative; z-index: 2;
+}
+
+.project-visual {
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 4/3;
+  background: var(--navy-mid);
+  border: 1px solid rgba(0,165,168,0.1);
+}
+/* Construction site illustration */
+.pv-sky {
+  position: absolute; top: 0; left: 0; right: 0; height: 55%;
+  background: linear-gradient(180deg, #0F1A2E 0%, #1B2D4F 100%);
+}
+.pv-ground {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 45%;
+  background: #141F33;
+}
+.pv-crane {
+  position: absolute; bottom: 40%; left: 20%;
+  width: 3px; height: 45%;
+  background: rgba(0,165,168,0.3);
+}
+.pv-crane::before {
+  content: ''; position: absolute;
+  top: 0; left: -60px;
+  width: 120px; height: 2px;
+  background: rgba(0,165,168,0.3);
+}
+.pv-crane::after {
+  content: ''; position: absolute;
+  top: 0; right: -2px;
+  width: 1px; height: 30%;
+  background: rgba(0,165,168,0.2);
+}
+.pv-building-1 {
+  position: absolute; bottom: 42%; left: 35%; width: 25%; height: 35%;
+  border: 1px solid rgba(0,165,168,0.15);
+  background: rgba(0,165,168,0.03);
+}
+.pv-building-2 {
+  position: absolute; bottom: 42%; right: 15%; width: 18%; height: 25%;
+  border: 1px solid rgba(0,165,168,0.15);
+  background: rgba(0,165,168,0.03);
+}
+.pv-data-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  background: linear-gradient(transparent 40%, rgba(15,26,46,0.9));
+}
+.pv-data-row {
+  display: flex; gap: 24px; align-items: center;
+}
+.pv-data-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal-muted);
+  background: rgba(0,165,168,0.1);
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(0,165,168,0.15);
+}
+
+.project-details { position: relative; z-index: 2; }
+.project-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.project-text {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--mid-gray);
+  margin-bottom: 32px;
+}
+.project-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 36px;
+}
+.metric-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 22px;
+}
+.metric-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--teal-light);
+}
+.metric-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  margin-top: 4px;
+}
+
+/* ════════════ PROCESS ════════════ */
+.process {
+  padding: 120px 0;
+  background: var(--white);
+}
+.process-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 72px;
+}
+.process-header .section-subtext { margin-top: 14px; }
+
+.process-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+.process-timeline::before {
+  content: '';
+  position: absolute;
+  top: 44px; left: 60px; right: 60px;
+  height: 2px;
+  background: var(--light-gray);
+}
+
+.process-step {
+  text-align: center;
+  padding: 0 20px;
+  position: relative;
+}
+.step-number {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: var(--off-white);
+  border: 2px solid var(--light-gray);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--teal);
+  position: relative; z-index: 2;
+  transition: all 0.4s ease;
+}
+.process-step:hover .step-number {
+  background: var(--teal);
+  color: var(--white);
+  border-color: var(--teal);
+  box-shadow: var(--shadow-glow);
+}
+.process-step h4 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--navy);
+}
+.process-step p {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--dark-gray);
+}
+
+/* ════════════ TECHNOLOGY ════════════ */
+.technology {
+  padding: 120px 0;
+  background: var(--off-white);
+}
+.tech-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 64px;
+}
+.tech-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 48px;
+  border: 1px solid var(--light-gray);
+  display: flex; gap: 24px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+.tech-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(0,165,168,0.2);
+}
+.tech-card::after {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle at top right, rgba(0,165,168,0.04), transparent 70%);
+}
+.tech-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: rgba(0,165,168,0.1);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.tech-card h4 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+.tech-card p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--dark-gray);
+}
+
+/* ════════════ CTA BANNER ════════════ */
+.cta-banner {
+  padding: 120px 0;
+  background: var(--gradient-dark);
+  position: relative;
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,165,168,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,165,168,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.cta-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,165,168,0.08), transparent 65%);
+  top: -200px; right: 10%;
+}
+.cta-content {
+  text-align: center;
+  position: relative; z-index: 2;
+}
+.cta-content .section-heading {
+  color: var(--white);
+  margin-bottom: 20px;
+}
+.cta-content .section-subtext {
+  text-align: center;
+  margin: 0 auto 40px;
+  color: var(--mid-gray);
+}
+.cta-btns { display: flex; gap: 16px; justify-content: center; }
+
+/* ════════════ TESTIMONIALS ════════════ */
+.testimonials {
+  padding: 120px 0;
+  background: var(--white);
+}
+.testimonials-header { text-align: center; margin-bottom: 64px; }
+.testimonials-header .section-subtext { margin: 18px auto 0; text-align: center; }
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.testimonial-card {
+  background: var(--off-white);
+  border-radius: 20px;
+  padding: 40px 32px;
+  border: 1px solid var(--light-gray);
+  position: relative;
+  transition: all 0.3s ease;
+}
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.testimonial-quote {
+  font-size: 2.4rem;
+  color: var(--teal);
+  font-family: 'Outfit', sans-serif;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.testimonial-text {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--dark-gray);
+  font-style: italic;
+  margin-bottom: 24px;
+}
+.testimonial-author {
+  display: flex; align-items: center; gap: 14px;
+}
+.testimonial-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--gradient-teal);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700; font-size: 0.85rem;
+  color: white;
+}
+.testimonial-name {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600; font-size: 0.9rem;
+  color: var(--navy);
+}
+.testimonial-role {
+  font-size: 0.78rem;
+  color: var(--mid-gray);
+}
+
+/* ════════════ CONTACT ════════════ */
+.contact {
+  padding: 120px 0;
+  background: var(--off-white);
+}
+.contact-layout {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 64px;
+  align-items: start;
+  margin-top: 48px;
+}
+.contact-info h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 16px;
+}
+.contact-info > p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--dark-gray);
+  margin-bottom: 36px;
+}
+.contact-detail {
+  display: flex; gap: 16px; align-items: flex-start;
+  margin-bottom: 24px;
+}
+.contact-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: rgba(0,165,168,0.08);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.contact-icon svg { width: 20px; height: 20px; stroke: var(--teal); }
+.contact-detail strong {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600; font-size: 0.88rem;
+  display: block; margin-bottom: 2px;
+}
+.contact-detail span {
+  font-size: 0.88rem;
+  color: var(--dark-gray);
+}
+
+.contact-form-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 48px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--light-gray);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.form-group { margin-bottom: 20px; }
+.form-group:last-of-type { margin-bottom: 28px; }
+.form-group label {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  padding: 14px 18px;
+  border: 1.5px solid var(--light-gray);
+  border-radius: 12px;
+  background: var(--off-white);
+  color: var(--navy);
+  outline: none;
+  transition: all 0.3s ease;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--teal);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(0,165,168,0.08);
+}
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-group select { cursor: pointer; appearance: none; }
+
+.submit-btn {
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 18px;
+  border-radius: 14px;
+  border: none;
+  background: var(--gradient-teal);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0,165,168,0.3);
+}
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,165,168,0.4);
+}
+
+/* ════════════ FOOTER ════════════ */
+.footer {
+  background: var(--navy-deep);
+  padding: 80px 0 40px;
+  position: relative;
+  overflow: hidden;
+}
+.footer::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,165,168,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,165,168,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+  position: relative; z-index: 2;
+}
+.footer-brand img { height: 48px; margin-bottom: 18px; filter: brightness(1.2); }
+.footer-brand p {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--mid-gray);
+  max-width: 280px;
+}
+.footer-col h5 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+.footer-col a {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--mid-gray);
+  text-decoration: none;
+  padding: 5px 0;
+  transition: color 0.3s ease;
+}
+.footer-col a:hover { color: var(--teal-light); }
+
+.footer-bottom {
+  margin-top: 60px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative; z-index: 2;
+}
+.footer-copy {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+}
+.footer-socials { display: flex; gap: 12px; }
+.footer-socials a {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--mid-gray);
+  text-decoration: none; font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+.footer-socials a:hover {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: white;
+}
+
+/* ════════════ RESPONSIVE ════════════ */
+@media (max-width: 1024px) {
+  .hero-content { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { max-width: 500px; margin: 0 auto; }
+  .services-grid { grid-template-columns: 1fr 1fr; }
+  .project-showcase { grid-template-columns: 1fr; }
+  .process-timeline { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .process-timeline::before { display: none; }
+  .tech-grid { grid-template-columns: 1fr; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-links { display: none; }
+  .nav-toggle { display: block; }
+  .stats-inner { grid-template-columns: 1fr 1fr; }
+  .stat-item + .stat-item::before { display: none; }
+  .services-grid { grid-template-columns: 1fr; }
+  .process-timeline { grid-template-columns: 1fr; }
+  .contact-layout { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .cta-btns { flex-direction: column; align-items: center; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+  .hero-stat-card { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════ NAVIGATION ══════ -->
+<nav class="nav" id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <img src="Gemini_Generated_Image_2ub8w22ub8w22ub8.png" alt="RNR Build" class="nav-logo">
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#technology">Technology</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════ HERO ══════ -->
+<section class="hero">
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-badge">
+          <div class="hero-badge-dot"></div>
+          <span>Now Accepting 2026 Projects</span>
+        </div>
+        <h1 class="hero-title">
+          Building<br>
+          <span class="teal">Smarter.</span><br>
+          Building <span class="outline">Better.</span>
+        </h1>
+        <p class="hero-desc">We integrate cutting-edge technology into every phase of construction — from intelligent project planning and BIM coordination to IoT-enabled site monitoring and data-driven decision making.</p>
+        <div class="hero-btns">
+          <a href="#contact" class="btn btn-primary">Start Your Project →</a>
+          <a href="#services" class="btn btn-outline">Our Services</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-blueprint">
+          <div class="bp-frame">
+            <div class="bp-grid"></div>
+            <div class="building-line bl-foundation"></div>
+            <div class="building-line bl-left"></div>
+            <div class="building-line bl-right"></div>
+            <div class="building-line bl-floor1"></div>
+            <div class="building-line bl-floor2"></div>
+            <div class="building-line bl-roof"></div>
+            <div class="building-line bl-mid"></div>
+            <div class="bp-node bp-node-1" data-label="HVAC Sys."></div>
+            <div class="bp-node bp-node-2" data-label="Struct. Load"></div>
+            <div class="bp-node bp-node-3" data-label="IoT Sensor"></div>
+          </div>
+          <div class="hero-stat-card stat-card-1">
+            <div class="stat-num">98.4%</div>
+            <div class="stat-label">On-Time Delivery</div>
+          </div>
+          <div class="hero-stat-card stat-card-2">
+            <div class="stat-num">$240M+</div>
+            <div class="stat-label">Projects Managed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ STATS ══════ -->
+<section class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item reveal"><div class="stat-number">150+</div><div class="stat-text">Projects Delivered</div></div>
+    <div class="stat-item reveal reveal-delay-1"><div class="stat-number">12</div><div class="stat-text">Years Experience</div></div>
+    <div class="stat-item reveal reveal-delay-2"><div class="stat-number">98%</div><div class="stat-text">Client Retention</div></div>
+    <div class="stat-item reveal reveal-delay-3"><div class="stat-number">$240M+</div><div class="stat-text">Project Value</div></div>
+  </div>
+</section>
+
+<!-- ══════ SERVICES ══════ -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="services-header reveal">
+      <div class="mono-label">What We Do</div>
+      <h2 class="section-heading">Construction Meets<br>Technology</h2>
+      <p class="section-subtext">End-to-end consultancy services that leverage smart systems and data to deliver construction projects that are safer, faster, and more cost-efficient.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#00A5A8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="22" height="22" rx="3"/>
+            <path d="M3 10h22M10 3v22"/>
+          </svg>
+        </div>
+        <h3>BIM & Digital Twin</h3>
+        <p>Full Building Information Modelling coordination, clash detection, and digital twin creation for real-time project visualization throughout the construction lifecycle.</p>
+        <div class="service-tags">
+          <span class="service-tag">Revit</span>
+          <span class="service-tag">Navisworks</span>
+          <span class="service-tag">4D/5D BIM</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#00A5A8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 3v22M3 14h22"/>
+            <circle cx="14" cy="14" r="4"/>
+            <circle cx="14" cy="14" r="10"/>
+          </svg>
+        </div>
+        <h3>Smart Project Management</h3>
+        <p>AI-powered scheduling, resource allocation, and budget forecasting systems that keep complex construction projects on track and within scope.</p>
+        <div class="service-tags">
+          <span class="service-tag">Procore</span>
+          <span class="service-tag">AI Scheduling</span>
+          <span class="service-tag">Analytics</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#00A5A8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 22L12 14L16 18L24 6"/>
+            <path d="M18 6h6v6"/>
+          </svg>
+        </div>
+        <h3>Construction Analytics</h3>
+        <p>Real-time dashboards and predictive analytics that transform raw site data into actionable insights for cost control, safety, and efficiency optimization.</p>
+        <div class="service-tags">
+          <span class="service-tag">Dashboards</span>
+          <span class="service-tag">Predictive</span>
+          <span class="service-tag">Reporting</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#00A5A8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 3L24 10v10L14 25 4 18V8Z"/>
+            <circle cx="14" cy="14" r="3"/>
+          </svg>
+        </div>
+        <h3>IoT & Site Monitoring</h3>
+        <p>Deploy sensor networks across job sites for real-time environmental monitoring, structural health tracking, equipment usage analytics, and safety compliance alerts.</p>
+        <div class="service-tags">
+          <span class="service-tag">Sensors</span>
+          <span class="service-tag">Environmental</span>
+          <span class="service-tag">Safety</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#00A5A8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="14" width="6" height="10" rx="1"/>
+            <rect x="11" y="8" width="6" height="16" rx="1"/>
+            <rect x="17" y="4" width="6" height="20" rx="1"/>
+          </svg>
+        </div>
+        <h3>Cost Engineering</h3>
+        <p>Precise quantity surveying, value engineering, and cost estimation powered by historical data analysis and machine learning models for optimal budgeting.</p>
+        <div class="service-tags">
+          <span class="service-tag">QS</span>
+          <span class="service-tag">Value Eng.</span>
+          <span class="service-tag">Estimation</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#00A5A8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 3L3 10v12l11 6 11-6V10Z"/>
+            <path d="M3 10l11 6 11-6M14 16v10"/>
+          </svg>
+        </div>
+        <h3>Sustainable Design Advisory</h3>
+        <p>Green building certification guidance, energy modelling, carbon footprint analysis, and material lifecycle assessment for environmentally responsible construction.</p>
+        <div class="service-tags">
+          <span class="service-tag">LEED</span>
+          <span class="service-tag">Energy Model</span>
+          <span class="service-tag">Carbon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ FEATURED PROJECT ══════ -->
+<section class="featured" id="projects">
+  <div class="container">
+    <div class="reveal">
+      <div class="mono-label">Featured Project</div>
+      <h2 class="section-heading">Projects That<br>Define Progress</h2>
+      <p class="section-subtext">A look at how our technology-first approach delivers measurable results.</p>
+    </div>
+    <div class="project-showcase">
+      <div class="project-visual reveal">
+        <div class="pv-sky"></div>
+        <div class="pv-ground"></div>
+        <div class="pv-crane"></div>
+        <div class="pv-building-1"></div>
+        <div class="pv-building-2"></div>
+        <div class="pv-data-overlay">
+          <div class="pv-data-row">
+            <span class="pv-data-chip">BIM Level 2</span>
+            <span class="pv-data-chip">IoT Enabled</span>
+            <span class="pv-data-chip">LEED Gold</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-details reveal reveal-delay-1">
+        <div class="mono-label" style="margin-bottom: 16px;">Commercial Mixed-Use</div>
+        <h3 class="project-title">Waterfront Business Centre — Grand Cayman</h3>
+        <p class="project-text">A 45,000 sq ft mixed-use commercial development integrating full BIM coordination, IoT-based site monitoring, and AI-driven scheduling. Our technology stack reduced construction time by 22% and delivered the project 8% under budget.</p>
+        <div class="project-metrics">
+          <div class="metric-box">
+            <div class="metric-value">45,000 ft²</div>
+            <div class="metric-label">Total Area</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">22%</div>
+            <div class="metric-label">Time Saved</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">8%</div>
+            <div class="metric-label">Under Budget</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">Zero</div>
+            <div class="metric-label">Safety Incidents</div>
+          </div>
+        </div>
+        <a href="#contact" class="btn btn-primary">Discuss Your Project →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ PROCESS ══════ -->
+<section class="process" id="process">
+  <div class="container">
+    <div class="process-header reveal">
+      <div>
+        <div class="mono-label">How We Work</div>
+        <h2 class="section-heading">Our Process</h2>
+        <p class="section-subtext">A proven four-phase methodology that turns your construction vision into a technology-powered reality.</p>
+      </div>
+    </div>
+    <div class="process-timeline">
+      <div class="process-step reveal">
+        <div class="step-number">01</div>
+        <h4>Discover & Assess</h4>
+        <p>Deep-dive into project requirements, site conditions, and technology opportunities. We audit existing workflows and identify where smart systems create the most value.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="step-number">02</div>
+        <h4>Design & Plan</h4>
+        <p>Develop BIM models, digital twins, and technology integration roadmaps. Define KPIs, select platforms, and create a unified project execution strategy.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="step-number">03</div>
+        <h4>Implement & Monitor</h4>
+        <p>Deploy IoT sensors, launch dashboards, and activate real-time tracking. Our team embeds on-site to ensure seamless technology adoption and data flow.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="step-number">04</div>
+        <h4>Optimize & Handover</h4>
+        <p>Continuous optimization through construction analytics. At completion, we deliver comprehensive as-built models, operational manuals, and ongoing support packages.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ TECHNOLOGY ══════ -->
+<section class="technology" id="technology">
+  <div class="container">
+    <div class="reveal">
+      <div class="mono-label">Our Edge</div>
+      <h2 class="section-heading">Technology That<br>Builds Confidence</h2>
+      <p class="section-subtext">We don't just consult — we deploy real technology solutions that transform how construction projects are planned, executed, and delivered.</p>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-card reveal">
+        <div class="tech-num">01</div>
+        <div>
+          <h4>Drone & LiDAR Surveying</h4>
+          <p>High-precision aerial mapping and 3D point cloud generation for site surveys, progress monitoring, and volumetric analysis — delivering centimetre-accurate topographic data.</p>
+        </div>
+      </div>
+      <div class="tech-card reveal reveal-delay-1">
+        <div class="tech-num">02</div>
+        <div>
+          <h4>AI-Powered Risk Analysis</h4>
+          <p>Machine learning models that predict delays, cost overruns, and safety risks before they happen — enabling proactive decision-making based on historical project patterns.</p>
+        </div>
+      </div>
+      <div class="tech-card reveal reveal-delay-2">
+        <div class="tech-num">03</div>
+        <div>
+          <h4>Modular & Prefab Integration</h4>
+          <p>Design-for-manufacture advisory services that optimize building components for off-site fabrication, reducing waste, improving quality control, and accelerating schedules.</p>
+        </div>
+      </div>
+      <div class="tech-card reveal reveal-delay-3">
+        <div class="tech-num">04</div>
+        <div>
+          <h4>Smart Building Handover</h4>
+          <p>Digital asset delivery including complete BIM models, equipment databases, and building management system integration — ensuring buildings operate as intelligently as they were built.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ CTA BANNER ══════ -->
+<section class="cta-banner">
+  <div class="cta-glow"></div>
+  <div class="container">
+    <div class="cta-content reveal">
+      <div class="mono-label" style="justify-content: center;">Ready to Build?</div>
+      <h2 class="section-heading">Let's Engineer Your<br>Next Project Together</h2>
+      <p class="section-subtext">Whether you're breaking ground on a new development or optimizing an existing construction workflow, our team is ready to bring the technology that makes the difference.</p>
+      <div class="cta-btns">
+        <a href="#contact" class="btn btn-primary">Schedule a Consultation →</a>
+        <a href="#services" class="btn btn-outline">View All Services</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ TESTIMONIALS ══════ -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="testimonials-header reveal">
+      <div class="mono-label" style="justify-content: center;">Client Voices</div>
+      <h2 class="section-heading">Trusted by Builders<br>Across the Caribbean</h2>
+      <p class="section-subtext">Hear from the developers, contractors, and project owners who've experienced the RNR Build difference.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">RNR Build's BIM coordination saved us three months on our waterfront project. Their technology integration was seamless — our team didn't skip a beat.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JM</div>
+          <div>
+            <div class="testimonial-name">James Mitchell</div>
+            <div class="testimonial-role">Director, Caribbean Development Corp.</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">The IoT monitoring system they deployed gave us real-time visibility we'd never had before. We caught three potential issues before they became costly problems.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SR</div>
+          <div>
+            <div class="testimonial-name">Sandra Rodriguez</div>
+            <div class="testimonial-role">PM, Apex Construction Ltd.</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">From initial assessment to handover, RNR Build brought a level of technical sophistication we hadn't seen in the region. They're changing how we build here.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">DW</div>
+          <div>
+            <div class="testimonial-name">David Williams</div>
+            <div class="testimonial-role">CEO, Grand Harbour Properties</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ CONTACT ══════ -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="reveal">
+      <div class="mono-label">Get In Touch</div>
+      <h2 class="section-heading">Start Building<br>Smarter Today</h2>
+    </div>
+    <div class="contact-layout">
+      <div class="contact-info reveal">
+        <h3>Let's discuss your next project</h3>
+        <p>Whether you're planning a new build, renovation, or infrastructure project, our team will develop a technology strategy tailored to your specific needs and budget.</p>
+        <div class="contact-detail">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <strong>Office</strong>
+            <span>George Town, Grand Cayman<br>Cayman Islands</span>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+          </div>
+          <div>
+            <strong>Email</strong>
+            <span>info@rnrbuild.ky</span>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div>
+            <strong>Phone</strong>
+            <span>+1 (345) 000-0000</span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form-card reveal reveal-delay-1">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="John">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Smith">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="john@example.com">
+        </div>
+        <div class="form-group">
+          <label>Project Type</label>
+          <select>
+            <option value="">Select project type...</option>
+            <option>Commercial New Build</option>
+            <option>Residential Development</option>
+            <option>Infrastructure</option>
+            <option>Renovation / Retrofit</option>
+            <option>Industrial / Warehouse</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tell Us About Your Project</label>
+          <textarea placeholder="Brief description of your project, timeline, and how we can help..."></textarea>
+        </div>
+        <button class="submit-btn">Send Enquiry →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ FOOTER ══════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="Gemini_Generated_Image_2ub8w22ub8w22ub8.png" alt="RNR Build">
+        <p>Technological Construction Consultancy. Integrating smart systems and data-driven solutions into the built environment across the Caribbean.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Services</h5>
+        <a href="#services">BIM & Digital Twin</a>
+        <a href="#services">Smart Project Mgmt</a>
+        <a href="#services">Construction Analytics</a>
+        <a href="#services">IoT Monitoring</a>
+        <a href="#services">Cost Engineering</a>
+        <a href="#services">Sustainability</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#">About Us</a>
+        <a href="#projects">Projects</a>
+        <a href="#process">Our Process</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#">Careers</a>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <a href="#">Blog</a>
+        <a href="#">Case Studies</a>
+        <a href="#">Technology Stack</a>
+        <a href="#">FAQs</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 RNR Build Ltd. All rights reserved — Cayman Islands</span>
+      <div class="footer-socials">
+        <a href="#" aria-label="LinkedIn">in</a>
+        <a href="#" aria-label="Instagram">ig</a>
+        <a href="#" aria-label="Facebook">fb</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll-triggered reveal animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Navbar scroll behavior
+const nav = document.getElementById('nav');
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  nav.classList.toggle('scrolled', y > 60);
+  lastScroll = y;
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Animated counters
+const counters = document.querySelectorAll('.stat-number');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const text = el.textContent;
+      const match = text.match(/(\$?)([\d,]+)(\+?%?M?\+?)/);
+      if (match) {
+        const prefix = match[1];
+        const numStr = match[2].replace(/,/g, '');
+        const suffix = match[3];
+        const target = parseInt(numStr);
+        let current = 0;
+        const duration = 1800;
+        const step = target / (duration / 16);
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) {
+            current = target;
+            clearInterval(timer);
+          }
+          el.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+        }, 16);
+      }
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => counterObserver.observe(c));
+</script>
+
+</body>
+</html>
